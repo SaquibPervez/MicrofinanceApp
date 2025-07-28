@@ -29,7 +29,7 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    router.push("/login");  
+    router.push("/dashboard");  
   };
 
   return (

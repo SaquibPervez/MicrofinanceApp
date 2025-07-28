@@ -28,7 +28,7 @@ function ProfilePage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-gray-500 text-lg">Loading profile...</div>
+        <div className="text-gray-500 text-lg">Regiester first...</div>
       </div>
     );
   }
@@ -53,7 +53,6 @@ function ProfilePage() {
 function ProfileField({ label, value, status = false }) {
   const statusColors = {
     Verified: 'text-green-600 font-semibold',
-    Pending: 'text-yellow-600 font-semibold',
     Rejected: 'text-red-600 font-semibold',
   };
 

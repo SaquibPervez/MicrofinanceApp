@@ -2,6 +2,8 @@
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+
 export default function VerifyOTP() {
     const router = useRouter()
   const searchParams = useSearchParams();
@@ -28,7 +30,7 @@ export default function VerifyOTP() {
       const result = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('token',result.token)
+        Cookies.set('token', result.token, { expires: 7, secure: true });
         alert('OTP Verified. You are now logged in.');
         router.push('/dashboard')
       } else {

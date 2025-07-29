@@ -18,7 +18,7 @@ export async function POST(req) {
     const otp = crypto.randomInt(100000, 999999).toString();
 
     if (!user) {
-      user = await User.create({ name, email, address, cnic, phone, otp});
+      user = await User.create({ name, email, address, cnic, phone, otp, isAdmin: false });
     } else {
       user.otp = otp;
       await user.save();

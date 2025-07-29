@@ -1,5 +1,5 @@
 'use client';
-
+import Cookies from 'js-cookie'
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
@@ -7,7 +7,7 @@ function LoanDetail() {
   const [loans, setLoans] = useState([]);
 
   const getLoans = async () => {
-    const token = localStorage.getItem('token');
+     const token = Cookies.get('token')
     if (!token) return;
 
     const { userId } = jwtDecode(token);
@@ -26,7 +26,7 @@ function LoanDetail() {
     getLoans();
   }, []);
 
-  const formatRupees = (amount) => `₨${amount.toLocaleString()}`;
+  const formatRupees = (amount) => `₨: ${amount.toLocaleString()}`;
 
   const getStatusBadgeColor = (status) => {
     switch (status) {
@@ -41,7 +41,7 @@ function LoanDetail() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+  <div className="max-w-7xl mx-auto p-6 overflow-x-auto">
       <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
         Your Loan Requests
       </h2>
@@ -49,47 +49,50 @@ function LoanDetail() {
       {loans.length === 0 ? (
         <p className="text-center text-gray-500">No loan requests found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {loans.map((loan) => (
-            <div
-              key={loan._id}
-              className="bg-white rounded-lg shadow-md p-6 border hover:shadow-lg transition-all duration-200"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-semibold text-gray-800">
-                  {loan.category}
-                </h3>
-                <span
-                  className={`text-sm px-3 py-1 rounded-full font-medium ${getStatusBadgeColor(
-                    loan.status
-                  )}`}
-                >
+        <table className="min-w-full table-auto border-collapse border text-sm">
+          <thead>
+            <tr className="bg-gray-100 text-left">
+              <th className="px-4 py-2 border">Category</th>
+              <th className="px-4 py-2 border">Subcategory</th>
+              <th className="px-4 py-2 border">Loan Amount</th>
+              <th className="px-4 py-2 border">Initial Deposit</th>
+              <th className="px-4 py-2 border">Monthly Payment</th>
+              <th className="px-4 py-2 border">Loan Period</th>
+              <th className="px-4 py-2 border">token Number</th>
+              <th className="px-4 py-2 border">Status</th>
+              <th className="px-4 py-2 border">Appointment Date</th>
+              <th className="px-4 py-2 border">Appointment Time</th>
+              <th className="px-4 py-2 border">Office Location</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loans.map((loan) => (
+              <tr key={loan._id}>
+                <td className="px-4 py-2 border">{loan.category}</td>
+                <td className="px-4 py-2 border">{loan.subcategory}</td>
+                <td className="px-4 py-2 border">{formatRupees(loan.loanAmount)}</td>
+                <td className="px-4 py-2 border">{formatRupees(loan.initialDeposit)}</td>
+                <td className="px-4 py-2 border">{formatRupees(loan.monthlyPayment)}</td>
+                <td className="px-4 py-2 border">{loan.loanPeriod}</td>
+                <td className="px-4 py-2 border">{loan.tokenNumber}</td>
+                <td className={`px-4 py-2 border font-medium ${getStatusBadgeColor(loan.status)}`}>
                   {loan.status.toUpperCase()}
-                </span>
-              </div>
-
-              <p className="text-sm text-gray-500 mb-1">
-                <strong>Subcategory:</strong> {loan.subcategory}
-              </p>
-              <p className="text-sm text-gray-500 mb-1">
-                <strong>Amount:</strong> {formatRupees(loan.loanAmount)}
-              </p>
-              <p className="text-sm text-gray-500 mb-1">
-                <strong>Initial Deposit:</strong> {formatRupees(loan.initialDeposit)}
-              </p>
-              <p className="text-sm text-gray-500 mb-1">
-                <strong>Monthly Payment:</strong> {formatRupees(loan.monthlyPayment)}
-              </p>
-              <p className="text-sm text-gray-500 mb-1">
-                <strong>Loan Period:</strong> {loan.loanPeriod}
-              </p>
-
-              <p className="text-xs text-gray-400 mt-3">
-                Created: {new Date(loan.createdAt).toLocaleString()}
-              </p>
-            </div>
-          ))}
-        </div>
+                </td>
+                <td className="px-4 py-2 border">
+                  {loan.appointmentDetails?.date
+                    ? new Date(loan.appointmentDetails.date).toLocaleDateString()
+                    : 'Will be set by admin'}
+                </td>
+                <td className="px-4 py-2 border">
+                  {loan.appointmentDetails?.time || 'Not set'}
+                </td>
+                <td className="px-4 py-2 border">
+                  {loan.appointmentDetails?.officeLocation || 'Not set'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

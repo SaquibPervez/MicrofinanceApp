@@ -35,6 +35,25 @@ const LoanRequestSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
+  tokenNumber: {
+  type: String,
+  default: '',
+},
+  appointmentDetails: {
+    date: {
+      type: Date,
+      default: null,  
+    },
+    time: {
+      type: String,
+      default: "will be saved by admin",  
+    },
+    officeLocation: {
+      type: String,
+      default: 'will be saved by admin',  
+    },
+    
+  },
+}, { timestamps: true });
 
 export default mongoose.models.LoanRequest || mongoose.model('LoanRequest', LoanRequestSchema);

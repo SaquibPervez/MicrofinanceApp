@@ -1,14 +1,15 @@
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
-function SummaryModal({show, onClose,onPreceed, loan, subcategory,deposit,amount, period,monthlyPay}) {
+import Cookies from 'js-cookie';
+
+function SummaryModal({show, onClose, loan, subcategory,deposit,amount, period,monthlyPay}) {
     if (!show) return null;
     const router = useRouter();
     
-   const submitLoanReq = async () => {
-    const token = localStorage.getItem('token');
+  const submitLoanReq = async () => {
+  const token = Cookies.get('token');
 const decoded = jwtDecode(token); 
 const userId = decoded.userId; 
-
   try {
     const response = await fetch('/api/loan-request', {
       method: 'POST',
@@ -20,7 +21,13 @@ const userId = decoded.userId;
         loanAmount: amount,
         loanPeriod: period,
         monthlyPayment: monthlyPay,
-        userId
+        userId,
+        tokenNumber: '',
+         appointmentDetails: {
+            date: null, 
+            time: "Will be set by admin",
+            officeLocation: "Will be set by admin"
+          }
       }),
     });
     let result;
@@ -45,8 +52,6 @@ const userId = decoded.userId;
     alert('An error occurred while submitting your loan request.');
   }
 };
-
-
   return (
   <div className="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 h-full">
     <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
@@ -70,7 +75,6 @@ const userId = decoded.userId;
         <button
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
           onClick={()=>{
-            // {onPreceed}
             submitLoanReq()
             }
           }

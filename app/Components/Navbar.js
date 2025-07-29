@@ -1,6 +1,6 @@
 'use client'
+import Cookies from 'js-cookie';
 import React, { useEffect, useState } from 'react';
-import { BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
@@ -8,7 +8,7 @@ export default function Navbar() {
      const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
     if (token) {
       setIsVerified(true);
     }
@@ -21,6 +21,8 @@ export default function Navbar() {
         return 'Our Loans';
       case '/loandetail':
         return 'Your Loan Details';
+        case '/admin/viewapplication':
+        return 'Application Requests';
       default:
         return 'Dashboard';
     }

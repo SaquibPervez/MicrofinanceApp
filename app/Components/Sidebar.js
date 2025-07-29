@@ -6,7 +6,10 @@ import {
   UserCircleIcon,
   DocumentTextIcon,
   ArrowRightOnRectangleIcon,
+  ShieldCheckIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
+import Cookies from "js-cookie";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -18,18 +21,33 @@ const navItems = [
   { name: "Profile", href: "/profile", icon: UserCircleIcon },
 ];
 
+const adminItems = [
+  { name: "Admin Dashboard", href: "/admin/dashboard", icon: ShieldCheckIcon },
+  { name: "View Users", href: "/admin/ViewUsers", icon: UserCircleIcon },
+  { name: "View Applications", href: "/admin/ViewApplications", icon: ClipboardDocumentCheckIcon },
+];
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
+  const [isAdminRoute, setIsAdminRoute] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    setIsAdminRoute(pathname.startsWith("/admin"));
+  }, [pathname]);
+
+  const logoutAdmin = () => {
+    Cookies.remove("token");
+    router.push("/admin/Login");
+  };
+
+  const logoutUser = () => {
+    Cookies.remove("token");
+    router.push("/");
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.push("/dashboard");  
+    isAdminRoute ? logoutAdmin() : logoutUser();
   };
 
   return (
@@ -39,7 +57,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
-        {navItems.map((item) => (
+        {(isAdminRoute ? adminItems : navItems).map((item) => (
           <Link
             key={item.name}
             href={item.href}
@@ -60,18 +78,14 @@ export default function Sidebar() {
       </nav>
 
       <div className="px-4 py-4 border-t border-gray-100">
-        {isClient ? (
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors w-full text-left"
-            type="button"
-          >
-            <ArrowRightOnRectangleIcon className="w-5 h-5 text-gray-400" />
-            <span className="text-sm font-medium">Logout</span>
-          </button>
-        ) : (
-          <button disabled>Logout</button>
-        )}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors w-full text-left"
+          type="button"
+        >
+          <ArrowRightOnRectangleIcon className="w-5 h-5 text-gray-400" />
+          <span className="text-sm font-medium">Logout</span>
+        </button>
       </div>
     </aside>
   );

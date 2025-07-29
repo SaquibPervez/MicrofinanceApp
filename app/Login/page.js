@@ -16,6 +16,7 @@ export default function Login() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
+      isAdmin: false,
       [e.target.name]: e.target.value
     });
   };

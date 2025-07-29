@@ -1,21 +1,24 @@
-// app/api/loan-request/route.js
 import { NextResponse } from 'next/server';
 import dbConnect from '@/server/lib/mongoose';
 import loanRequest from '@/server/models/loanRequest';
 
 export async function POST(req) {
+  
   try {
     await dbConnect();
 
-    const {
-      category,
-      subcategory,
-      initialDeposit,
-      loanAmount,
-      loanPeriod,
-      monthlyPayment,
-      userId, 
-    } = await req.json();
+   const {
+  category,
+  subcategory,
+  initialDeposit,
+  loanAmount,
+  loanPeriod,
+  monthlyPayment,
+  userId,
+  tokenNumber,
+  appointmentDetails, 
+} = await req.json();
+
 
     if (!category || !subcategory || !initialDeposit || !loanAmount || !loanPeriod || !monthlyPayment || !userId) {
       return NextResponse.json(
@@ -32,6 +35,12 @@ export async function POST(req) {
   loanPeriod,
   monthlyPayment, 
   userId, 
+  tokenNumber,
+  appointmentDetails: appointmentDetails || {
+        date: null,
+        time: null,
+        officeLocation: null
+      }
 });
 
     const savedLoan = await newLoanRequest.save();

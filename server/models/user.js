@@ -8,6 +8,13 @@ const userSchema = new mongoose.Schema({
   phone: String,
   otp: String,
   status: { type: String, enum: ['Verified', 'Not Verified'], default: 'Not Verified' },
+  isAdmin: { type: Boolean, default: false },
+  password: {
+    type: String,
+    required: function () {
+      return this.isAdmin === true;
+    },
+  },
 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);

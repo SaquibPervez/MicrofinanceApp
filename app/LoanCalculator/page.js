@@ -37,9 +37,6 @@ const searchParams = useSearchParams();
     <SummaryModal 
     show={showModal}
     onClose = {() => setShowModal(false)}
-    onProceed = {()=>{
-      setShowModal(false)
-    }}
     loan={loan?.name}
     subcategory={subcategory}
     deposit={Initialdeposit}

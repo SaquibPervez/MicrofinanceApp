@@ -1,5 +1,6 @@
 'use client'
 import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 function Dashboard() {
   const router = useRouter();
 
@@ -39,7 +40,7 @@ function Dashboard() {
 ];
 const handleloanname = (loan)=>{
    const loanObject = encodeURIComponent(JSON.stringify(loan));
-  const token = localStorage.getItem('token')
+  const token = Cookies.get('token')
   if (token) {
     router.push(`/LoanCalculator?loan=${loanObject}`)
   }

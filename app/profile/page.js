@@ -1,12 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie'
 
 function ProfilePage() {
   const [user, setUser] = useState(null);
 
   const getProfile = async () => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token')
     if (!token) return;
 
     const { userId } = jwtDecode(token);
@@ -28,7 +29,7 @@ function ProfilePage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-gray-500 text-lg">Regiester first...</div>
+        <div className="text-gray-500 text-lg">Loading Profile...</div>
       </div>
     );
   }

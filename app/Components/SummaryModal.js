@@ -63,7 +63,6 @@ const userId = decoded.userId;
       <p><strong>Loan Period:</strong> {period}</p>
       <h3 className="text-lg font-bold text-gray-700 mt-4">Monthly Payment:</h3>
       <p className="mb-4">Rs. {monthlyPay}</p>
-
       <div className="flex justify-end space-x-3">
         <button
           className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"

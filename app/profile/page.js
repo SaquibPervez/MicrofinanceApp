@@ -123,7 +123,6 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* Footer */}
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 text-center text-sm text-gray-500">
             Last updated: {new Date().toLocaleDateString()}
           </div>

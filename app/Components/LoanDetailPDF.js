@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import QRCode from './QRCode'
 
 const styles = StyleSheet.create({
   page: {
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const LoanDetailPDF = ({ loan }) => (
+const LoanDetailPDF = ({ loan ,qrCodeImage}) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
@@ -133,7 +134,12 @@ const LoanDetailPDF = ({ loan }) => (
           </View>
         ))}
       </View>
-
+        {qrCodeImage && (
+          <Image
+            src={qrCodeImage}
+            style={{ width: 100, height: 100, marginTop: 20 }}
+          />
+        )}
       {/* Footer */}
       <Text style={styles.footer}>
         This document is system generated and does not require signature

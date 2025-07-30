@@ -2,8 +2,7 @@ import React from 'react'
 
 function Contactus() {
   return (
-    <section className="py-16">
-  <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section className="py-16 mx-10">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       {/* Form Section */}
       <div>
@@ -67,7 +66,6 @@ function Contactus() {
         />
       </div>
     </div>
-  </div>
 </section>
 
   )

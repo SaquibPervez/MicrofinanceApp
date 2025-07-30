@@ -1,46 +1,31 @@
-'use client'
-import Cookies from 'js-cookie';
-import React, { useEffect, useState } from 'react';
+'use client';
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const DynamicVerificationStatus = dynamic(() => import('./VerificationStatus'), {
+  ssr: false, 
+});
 
 export default function Navbar() {
   const pathname = usePathname();
-     const [isVerified, setIsVerified] = useState(false);
 
-  useEffect(() => {
-    const token = Cookies.get('token');
-    if (token) {
-      setIsVerified(true);
-    }
-  }, []);
-  const getPageTitle = () => {
-    switch(pathname) {
-      case '/profile':
-        return 'My Profile';
-      case '/dashboard':
-        return 'Our Loans';
-      case '/loandetail':
-        return 'Your Loan Details';
-        case '/admin/viewapplication':
-        return 'Application Requests';
-      default:
-        return 'Dashboard';
-    }
-  };
+  const title =
+    {
+      '/profile': 'My Profile',
+      '/dashboard': 'Loan Dashboard',
+      '/loandetail': 'Loan Details',
+      '/admin/ViewApplications': 'All Applications',
+      '/admin/ViewUsers': 'All Users',
+    }[pathname] || 'Dashboard';
 
   return (
-    <header className="w-full h-16 bg-white border-b border-gray-100 shadow-sm px-6 sticky top-0 z-10">
+    <header className="w-full h-16 bg-white border-b border-gray-200 px-6 sticky top-0 z-50">
       <div className="flex items-center justify-between h-full max-w-7xl mx-auto">
         <div className="flex items-center">
-          <h2 className="text-lg font-semibold text-gray-800">
-            {getPageTitle()}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
         </div>
-        {isVerified ? (
-        <span className="text-green-600 font-semibold">Verified</span>
-      ) : (
-        <span className="text-gray-500">Not Verified</span>
-      )}
+
+        <DynamicVerificationStatus />
       </div>
     </header>
   );

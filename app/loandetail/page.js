@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import UserLoanPDF from "../Components/LoanDetailPDF";
 import { FiDownload, FiClock, FiCalendar, FiMapPin, FiDollarSign, FiCreditCard } from 'react-icons/fi';
-
+import QRCode from '../Components/QRCode'
 function LoanDetail() {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -161,7 +161,7 @@ function LoanDetail() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {getStatusBadge(loan.status)}
-                          <div className="text-xs text-gray-500 mt-1">{loan.loanPeriod}</div>
+                          <div className="text-xs text-center text-gray-500 mt-2">{loan.loanPeriod}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center text-sm text-gray-900">
@@ -177,20 +177,21 @@ function LoanDetail() {
                             {loan.appointmentDetails?.officeLocation || 'Not set'}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <PDFDownloadLink
-                            document={<UserLoanPDF loan={loan} />}
-                            fileName={`loan-${loan.tokenNumber || loan._id}.pdf`}
-                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            {({ loading }) => (
-                              <>
-                                <FiDownload className="mr-1" />
-                                {loading ? 'Generating...' : 'PDF'}
-                              </>
-                            )}
-                          </PDFDownloadLink>
-                        </td>
+                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+      <PDFDownloadLink
+        document={<UserLoanPDF loan={loan} />}
+        fileName={`loan-${loan.tokenNumber || loan._id}.pdf`}
+        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        {({ loading }) => (
+          <>
+            <FiDownload className="mr-1" />
+            {loading ? 'Generating...' : 'PDF'}
+          </>
+        )}
+      </PDFDownloadLink>
+      {/* <QRCode text={JSON.stringify(loan)} size={64} /> */}
+    </td>
                       </tr>
                     ))}
                   </tbody>

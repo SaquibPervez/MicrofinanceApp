@@ -91,19 +91,6 @@ const searchParams = useSearchParams();
         ))}
       </select>
 
-              <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Initial Deposit (₨) (If Any)</label>
-            <input 
-            required
-              type="number" 
-              id="initialDeposit" 
-              name="initialDeposit" 
-              placeholder="Enter amount"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-              value={Initialdeposit}  
-      onChange={(e) => setInitialdeposit(e.target.value)}
-            />
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Loan Amount (Max is ₨: {loan.maxAmount})</label>
@@ -119,6 +106,19 @@ const searchParams = useSearchParams();
             />
           </div>
 
+              <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Initial Deposit (₨) (If Any)</label>
+            <input 
+            required
+              type="number" 
+              id="initialDeposit" 
+              name="initialDeposit" 
+              placeholder="Enter amount"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              value={Initialdeposit}  
+      onChange={(e) => setInitialdeposit(e.target.value)}
+            />
+          </div>
           <div>
   <label className="block text-sm font-medium text-gray-700 mb-1">Loan Period (Years)</label>
  <select

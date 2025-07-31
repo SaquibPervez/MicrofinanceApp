@@ -15,7 +15,7 @@ function LoanDetail() {
     try {
       const token = Cookies.get('token');
       if (!token) {
-        setError('Authentication required');
+        setError('Registration Required');
         return;
       }
 
@@ -82,7 +82,7 @@ function LoanDetail() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Loans</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">No Loans Details</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={getLoans}

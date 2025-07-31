@@ -10,7 +10,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isAuthPage = ['/Login', '/Login/verifyOTP', '/admin/Login'].includes(pathname.toLowerCase());
+  const authPages = ['/Login', '/Login/verifyOTP', '/admin/Login'];
+const isAuthPage = authPages.includes(pathname);
 
   return (
     <html lang="en">
@@ -18,7 +19,7 @@ export default function RootLayout({
         {isAuthPage ? (
           <div className="min-h-screen">{children}</div>
         ) : (
-          <div className="flex min-h-screen bg-blue-100">
+          <div className="flex min-h-screen bg-blue-100 text-black">
             <div className="fixed left-0 top-0 h-full z-10">
               <Sidebar />
             </div>

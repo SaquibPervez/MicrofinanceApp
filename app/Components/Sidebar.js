@@ -36,9 +36,12 @@ export default function Sidebar() {
     setIsAdminRoute(pathname.startsWith("/admin"));
   }, [pathname]);
 
-  const logoutAdmin = () => {
-    Cookies.remove("token");
-    router.push("/admin/Login");
+  const logoutAdmin = async () => {
+    await fetch('/api/admin/logout', {
+        method: "POST",
+        credentials: 'include'
+    });
+    router.push('/admin/Login')
   };
 
   const logoutUser = () => {

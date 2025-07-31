@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
-import Cookies from 'js-cookie';
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,7 +51,6 @@ const handleSubmit = async (e) => {
     if (!response.ok) {
       throw new Error(data.message || 'Login failed');
     }
-    Cookies.set('token', data.token, { expires: 7, secure: true });
     router.push('/admin/dashboard');
   } catch (err) {
     setError(err instanceof Error ? err.message : 'Invalid credentials. Please try again.');
@@ -106,7 +104,7 @@ const handleSubmit = async (e) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border"
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border text-gray-600"
                   placeholder="admin@example.com"
                 />
               </div>
@@ -129,7 +127,7 @@ const handleSubmit = async (e) => {
                   minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border"
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border text-gray-600"
                   placeholder="••••••••"
                 />
               </div>

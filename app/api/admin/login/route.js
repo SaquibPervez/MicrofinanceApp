@@ -25,6 +25,12 @@ export async function POST(req) {
   );
 
   const response = NextResponse.json({ message: 'Admin logged in' , token});
+  response.cookies.set('Admin-token', token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  path: '/',
+  maxAge: 60 * 60 * 24 * 7, 
+});
 
   return response;
 }

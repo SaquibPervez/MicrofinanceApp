@@ -180,7 +180,7 @@ function LoanDetail() {
                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
       <PDFDownloadLink
         document={<UserLoanPDF loan={loan} />}
-        fileName={`loan-${loan.tokenNumber || loan._id}.pdf`}
+        // fileName={`loan-${loan.tokenNumber || loan._id}.pdf`}
         className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       >
         {({ loading }) => (
@@ -190,7 +190,7 @@ function LoanDetail() {
           </>
         )}
       </PDFDownloadLink>
-      {/* <QRCode text={JSON.stringify(loan)} size={64} /> */}
+      {/* <QRCode text={} /> */}
     </td>
                       </tr>
                     ))}

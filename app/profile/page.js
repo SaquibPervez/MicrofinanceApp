@@ -13,8 +13,9 @@ function ProfilePage() {
     try {
       const token = Cookies.get('token');
       if (!token) {
-        setError('Authentication required');
+        setError('Registration Required');
         return;
+        
       }
 
       const { userId } = jwtDecode(token);
@@ -56,7 +57,7 @@ function ProfilePage() {
           <div className="text-red-500 mb-4">
             <FiXCircle size={48} className="mx-auto" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Profile</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">No Profile Found</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={getProfile}

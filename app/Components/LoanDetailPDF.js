@@ -1,5 +1,4 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
-import QRCode from './QRCode'
 
 const styles = StyleSheet.create({
   page: {
@@ -69,16 +68,13 @@ const styles = StyleSheet.create({
   },
 })
 
-const LoanDetailPDF = ({ loan ,qrCodeImage}) => (
+const LoanDetailPDF = ({ loan }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>LOAN APPLICATION DETAILS</Text>
         <Text style={styles.subtitle}>LoanEase Financial Services</Text>
       </View>
-
-      {/* Loan Information Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Loan Information</Text>
         
@@ -97,7 +93,6 @@ const LoanDetailPDF = ({ loan ,qrCodeImage}) => (
         ))}
       </View>
 
-      {/* Application Details Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Application Details</Text>
         
@@ -119,7 +114,6 @@ const LoanDetailPDF = ({ loan ,qrCodeImage}) => (
         </View>
       </View>
 
-      {/* Appointment Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Appointment Details</Text>
         
@@ -134,13 +128,7 @@ const LoanDetailPDF = ({ loan ,qrCodeImage}) => (
           </View>
         ))}
       </View>
-        {qrCodeImage && (
-          <Image
-            src={qrCodeImage}
-            style={{ width: 100, height: 100, marginTop: 20 }}
-          />
-        )}
-      {/* Footer */}
+       
       <Text style={styles.footer}>
         This document is system generated and does not require signature
       </Text>

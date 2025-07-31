@@ -2,11 +2,9 @@
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import SummaryModal from '../Components/SummaryModal'
-
+import { useRouter } from 'next/navigation';
 function Calculator() {
-
-  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 const searchParams = useSearchParams();
   const loanObject = searchParams.get('loan');
  let loan = null;
@@ -23,27 +21,13 @@ const searchParams = useSearchParams();
   const [monthlypay, setmonthlypay] = useState("")
 
   const calculateMonthlyPay = () => {
-    const amount = parseFloat(loanAmount);
-    const deposit = Initialdeposit ? parseFloat(Initialdeposit) : 0;
-    const period = parseInt(loanPeriod); 
-    
-  const principal = amount - deposit;
-  const monthly = principal / period;
-  setmonthlypay(Math.round(monthly));
+ 
 };
+
+
   return (
     <>
     <div><Toaster/></div>
-    <SummaryModal 
-    show={showModal}
-    onClose = {() => setShowModal(false)}
-    loan={loan?.name}
-    subcategory={subcategory}
-    deposit={Initialdeposit}
-    amount= {loanAmount}
-    period={loanPeriod}
-    monthlyPay= {monthlypay}  
-    />
       <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Loan Calculator</h1>
@@ -142,9 +126,25 @@ const searchParams = useSearchParams();
 </div>
           <div className="pt-4">
             <button 
-           onClick={() => {
-    calculateMonthlyPay();
-    setShowModal(true);
+            onClick={() => {
+       const amount = parseFloat(loanAmount);
+    const deposit = Initialdeposit ? parseFloat(Initialdeposit) : 0;
+    const period = parseInt(loanPeriod); 
+    
+  const principal = amount - deposit;
+  const monthly = principal / period;
+
+    const LoanData = {
+      loan: loan.name,
+      subcategory,
+      deposit: Initialdeposit,
+      amount: loanAmount,
+      period: loanPeriod,
+      monthlypay: monthly
+    };
+
+    const LoanSummary = encodeURIComponent(JSON.stringify(LoanData));
+    router.push(`/LoanSummary?loan=${LoanSummary}`);
   }}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200"
             >

@@ -1,8 +1,10 @@
 'use client'
+export const dynamic = 'force-dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 function Calculator() {
   const router = useRouter();
 const searchParams = useSearchParams();
@@ -18,15 +20,11 @@ const searchParams = useSearchParams();
   const [Initialdeposit, setInitialdeposit] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [loanPeriod, setLoanPeriod] = useState("");
-  const [monthlypay, setmonthlypay] = useState("")
-
-  const calculateMonthlyPay = () => {
- 
-};
 
   return (
     <>
     <div><Toaster/></div>
+     <Suspense fallback={<div>Loading calculator...</div>}>
       <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md my-3">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Loan Calculator</h1>
@@ -153,6 +151,7 @@ const searchParams = useSearchParams();
         </form>
       </div>
     </div>
+    </Suspense>
     </>
   )
 }

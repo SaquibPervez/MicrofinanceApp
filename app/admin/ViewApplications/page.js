@@ -183,7 +183,6 @@ function ViewApplication() {
                       )}
                     </td>
 
-                    {/* Category/Subcategory/Amount */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {loan.category}
                     </td>
@@ -194,7 +193,6 @@ function ViewApplication() {
                       Rs. {loan.loanAmount?.toLocaleString('en-IN') || '0'}
                     </td>
 
-                    {/* Status */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       {editingId === loan._id ? (
                         <select
@@ -215,7 +213,6 @@ function ViewApplication() {
                       )}
                     </td>
 
-                    {/* Appointment Date/Time/Location */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {editingId === loan._id ? (
                         <input 

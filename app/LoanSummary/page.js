@@ -2,9 +2,8 @@
 import { jwtDecode } from 'jwt-decode';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
-import QRCode from '../Components/QRCode';
 import { useEffect, useState } from 'react';
-
+import { Suspense } from 'react';
 function SummaryModal() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -77,12 +76,14 @@ function SummaryModal() {
   const { loan, subcategory, deposit, amount, period, monthlypay } = loanData;
   console.log(monthlypay, 'pay')
   return (
+
     <>
+    <Suspense fallback={<div>Loading loan Summary...</div>}>
     <div className='mx-10 border mt-10'>
     <div className="bg-blue-600 px-6 py-4">
       <h2 className="text-xl font-bold text-white">Loan Application Summary</h2>
     </div>
-    
+
     <div className="p-6">
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-8 text-center">
@@ -127,6 +128,7 @@ function SummaryModal() {
       </div>
     </div>
    </div>
+   </Suspense>
           </>
 );
 

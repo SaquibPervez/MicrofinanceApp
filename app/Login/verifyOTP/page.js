@@ -1,10 +1,12 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
-export default function VerifyOTP() {
+export const dynamic = 'force-dynamic';
+
+function VerifyOTPContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -55,6 +57,11 @@ export default function VerifyOTP() {
       setIsLoading(false);
     }
   };
+
+  if (!email) {
+    router.push('/login');
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4">
@@ -116,8 +123,8 @@ export default function VerifyOTP() {
             disabled={isLoading}
             className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${
               isLoading 
-                ? 'bg-blue-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700'
+              ? 'bg-blue-400 cursor-not-allowed' 
+              : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
             {isLoading ? (
@@ -133,5 +140,20 @@ export default function VerifyOTP() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function VerifyOTP() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="p-4 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading verification page...</p>
+        </div>
+      </div>
+    }>
+      <VerifyOTPContent />
+    </Suspense>
   );
 }

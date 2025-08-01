@@ -1,31 +1,35 @@
 'use client'
-export const dynamic = 'force-dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { Suspense } from 'react';
-function Calculator() {
+
+export const dynamic = 'force-dynamic';
+
+function CalculatorContent() {
   const router = useRouter();
-const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const loanObject = searchParams.get('loan');
- let loan = null;
+  let loan = null;
+  
   try {
     loan = loanObject ? JSON.parse(decodeURIComponent(loanObject)) : null;
   } catch (error) {
     console.error("Error parsing loan data:", error);
-  };
+    toast.error("Invalid loan data");
+    router.push('/');
+    return null;
+  }
 
   const [subcategory, setSubcategory] = useState("");
   const [Initialdeposit, setInitialdeposit] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [loanPeriod, setLoanPeriod] = useState("");
 
+  if (!loan) return null;
+
   return (
-    <>
-    <div><Toaster/></div>
-     <Suspense fallback={<div>Loading calculator...</div>}>
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md my-3">
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md my-3">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Loan Calculator</h1>
         <p className="text-gray-600">Enter the loan details to calculate your monthly payment</p>
@@ -55,94 +59,94 @@ const searchParams = useSearchParams();
           </div>
         </div>
 
-        <form className="space-y-4" 
-        onSubmit={(e) => e.preventDefault()}>
-        <select
-        required
-        name="subcategory"
-        value={subcategory}
-        onChange={(e) => setSubcategory(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-      >
-        <option value="">Select a subcategory</option>
-        {loan.subcategories.map((subcategory, index) => (
-          <option key={index} value={subcategory}>
-            {subcategory}
-          </option>
-        ))}
-      </select>
-
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <select
+            required
+            name="subcategory"
+            value={subcategory}
+            onChange={(e) => setSubcategory(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          >
+            <option value="">Select a subcategory</option>
+            {loan.subcategories.map((subcategory, index) => (
+              <option key={index} value={subcategory}>
+                {subcategory}
+              </option>
+            ))}
+          </select>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Loan Amount (Max is ₨: {loan.maxAmount})</label>
             <input 
-            required
+              required
               type="number" 
               id="loanAmount" 
               name="loanAmount" 
               placeholder="Enter amount"
               className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
               value={loanAmount}
-      onChange={(e) => setLoanAmount(e.target.value)}
+              onChange={(e) => setLoanAmount(e.target.value)}
+              max={loan.maxAmount}
             />
           </div>
 
-              <div>
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Initial Deposit (₨) (If Any)</label>
             <input 
-            required
+              required
               type="number" 
               id="initialDeposit" 
               name="initialDeposit" 
               placeholder="Enter amount"
               className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
               value={Initialdeposit}  
-      onChange={(e) => setInitialdeposit(e.target.value)}
+              onChange={(e) => setInitialdeposit(e.target.value)}
             />
           </div>
-          <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Loan Period (Years)</label>
- <select
-        required
-        name="loanPeriod"
-        value={loanPeriod}
-        onChange={(e) => setLoanPeriod(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-      >
-        <option value="">Select a Loan Period</option>
-          <option>6 Months</option>
-          <option>12 Months (1 Year)</option>
-          <option>18 Months</option>
-          <option>24 Months (2 Year)</option>
-          <option>30 Months</option>
-          <option>36 Months (3 Year)</option>
-          <option>42 Months</option>
-          <option>48 Months (4 Year)</option>
-      </select>
 
-</div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Loan Period (Years)</label>
+            <select
+              required
+              name="loanPeriod"
+              value={loanPeriod}
+              onChange={(e) => setLoanPeriod(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            >
+              <option value="">Select a Loan Period</option>
+              <option>6 Months</option>
+              <option>12 Months (1 Year)</option>
+              <option>18 Months</option>
+              <option>24 Months (2 Year)</option>
+              <option>30 Months</option>
+              <option>36 Months (3 Year)</option>
+              <option>42 Months</option>
+              <option>48 Months (4 Year)</option>
+            </select>
+          </div>
+
           <div className="pt-4">
             <button 
-            onClick={() => {
-       const amount = parseFloat(loanAmount);
-    const deposit = Initialdeposit ? parseFloat(Initialdeposit) : 0;
-    const period = parseInt(loanPeriod); 
-    
-  const principal = amount - deposit;
-  const monthly = (principal / period);
-  const monthlypay = Math.round(monthly);           
-    const LoanData = {
-      loan: loan.name,
-      subcategory,
-      deposit: Initialdeposit,
-      amount: loanAmount,
-      period: loanPeriod,
-      monthlypay,
-    };
+              onClick={() => {
+                const amount = parseFloat(loanAmount);
+                const deposit = Initialdeposit ? parseFloat(Initialdeposit) : 0;
+                const period = parseInt(loanPeriod); 
+                const principal = amount - deposit;
+                const monthly = (principal / period);
+                const monthlypay = Math.round(monthly);           
+                
+                const LoanData = {
+                  loan: loan.name,
+                  subcategory,
+                  deposit: Initialdeposit,
+                  amount: loanAmount,
+                  period: loanPeriod,
+                  monthlypay,
+                };
 
-    const LoanSummary = encodeURIComponent(JSON.stringify(LoanData));
-    router.push(`/LoanSummary?loan=${LoanSummary}`);
-  }}
+                const LoanSummary = encodeURIComponent(JSON.stringify(LoanData));
+                router.push(`/LoanSummary?loan=${LoanSummary}`);
+              }}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200"
             >
               Show Loan Summary
@@ -151,9 +155,16 @@ const searchParams = useSearchParams();
         </form>
       </div>
     </div>
-    </Suspense>
-    </>
-  )
+  );
 }
 
-export default Calculator
+export default function Calculator() {
+  return (
+    <>
+      <div><Toaster/></div>
+      <Suspense fallback={<div className="flex justify-center items-center h-screen">Loading calculator...</div>}>
+        <CalculatorContent />
+      </Suspense>
+    </>
+  );
+}

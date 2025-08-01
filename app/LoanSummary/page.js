@@ -2,14 +2,17 @@
 import { jwtDecode } from 'jwt-decode';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { useEffect, useState } from 'react';
-import { Suspense } from 'react';
-function SummaryModal() {
+import { useEffect, useState, Suspense } from 'react';
+
+export const dynamic = 'force-dynamic';
+
+function SummaryContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [loanData, setLoanData] = useState(null);
   const [userId, setUserId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const loanObject = searchParams.get('loan');
@@ -18,6 +21,8 @@ function SummaryModal() {
       setLoanData(parsed);
     } catch (error) {
       console.error('Error parsing loan data:', error);
+      alert('Invalid loan data format');
+      router.push('/dashboard');
     }
 
     const token = Cookies.get('token');
@@ -29,10 +34,11 @@ function SummaryModal() {
         console.error('Invalid token', err);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const submitLoanReq = async () => {
     if (!loanData) return;
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('/api/loan-request', {
@@ -57,80 +63,80 @@ function SummaryModal() {
 
       const result = await response.json();
       if (!response.ok) {
-        alert(`Error: ${result.message || 'Something went wrong'}`);
-        return;
+        throw new Error(result.message || 'Something went wrong');
       }
 
-      alert('Loan request saved');
+      alert('Loan request saved successfully');
       router.push('/loandetail');
     } catch (error) {
       console.error('Loan request error:', error);
-      alert('An error occurred while submitting your loan request.');
+      alert(`Error: ${error.message || 'An error occurred while submitting your loan request.'}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!loanData) {
-    return <div className="text-center mt-20 text-gray-600">Loading loan summary...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading loan summary...</p>
+        </div>
+      </div>
+    );
   }
 
   const { loan, subcategory, deposit, amount, period, monthlypay } = loanData;
-  console.log(monthlypay, 'pay')
+
   return (
-
-    <>
-    <Suspense fallback={<div>Loading loan Summary...</div>}>
-    <div className='mx-10 border mt-10'>
-    <div className="bg-blue-600 px-6 py-4">
-      <h2 className="text-xl font-bold text-white">Loan Application Summary</h2>
-    </div>
-
-    <div className="p-6">
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-8 text-center">
-          <DetailItem label="Loan Category" value={loan} />
-          <DetailItem label="Subcategory" value={subcategory} />
-          <DetailItem label="Initial Deposit" value={`Rs. ${deposit.toLocaleString()}`} />
-          <DetailItem label="Loan Amount" value={`Rs. ${amount.toLocaleString()}`} />
-          <DetailItem label="Loan Period" value={period} />
-        </div>
-
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-          <div className="flex justify-between items-center">
-            <span className="font-semibold text-blue-800">Monthly Payment</span>
-            <span className="text-2xl font-bold text-blue-600">
-              Rs. {monthlypay.toLocaleString()}
-            </span>
-          </div>
-          <p className="text-sm text-blue-600 mt-1">*Based on current terms</p>
-        </div>
-
-        {/* QR Code Placeholder */}
-        {/* {userId && (
-          <div className="flex justify-center pt-2">
-          <QRCode text={userId} size={128} />
-          </div>
-          )} */}
+    <div className='mx-4 md:mx-10 border mt-10'>
+      <div className="bg-blue-600 px-6 py-4">
+        <h2 className="text-xl font-bold text-white">Loan Application Summary</h2>
       </div>
 
-      <div className="flex justify-between mt-8 space-x-4">
-        <button
-          onClick={() => router.back()}
-          className="flex-1 px-4 py-3 border border-gray-500 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+      <div className="p-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 text-center">
+            <DetailItem label="Loan Category" value={loan} />
+            <DetailItem label="Subcategory" value={subcategory} />
+            <DetailItem label="Initial Deposit" value={`Rs. ${deposit.toLocaleString()}`} />
+            <DetailItem label="Loan Amount" value={`Rs. ${amount.toLocaleString()}`} />
+            <DetailItem label="Loan Period" value={period} />
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-blue-800">Monthly Payment</span>
+              <span className="text-2xl font-bold text-blue-600">
+                Rs. {monthlypay.toLocaleString()}
+              </span>
+            </div>
+            <p className="text-sm text-blue-600 mt-1">*Based on current terms</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between mt-8 gap-4">
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-3 border border-gray-500 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
           >
-          Back
-        </button>
-        <button
-          onClick={submitLoanReq}
-          className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors shadow-md hover:shadow-lg"
+            Back
+          </button>
+          <button
+            onClick={submitLoanReq}
+            disabled={isSubmitting}
+            className={`px-4 py-3 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg ${
+              isSubmitting ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+            }`}
           >
-          Confirm & Proceed
-        </button>
+            {isSubmitting ? 'Submitting...' : 'Confirm & Proceed'}
+          </button>
+        </div>
       </div>
     </div>
-   </div>
-   </Suspense>
-          </>
-);
+  );
+}
 
 function DetailItem({ label, value }) {
   return (
@@ -140,6 +146,18 @@ function DetailItem({ label, value }) {
     </div>
   );
 }
-}
 
-export default SummaryModal;
+export default function SummaryModal() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading loan details...</p>
+        </div>
+      </div>
+    }>
+      <SummaryContent />
+    </Suspense>
+  );
+}

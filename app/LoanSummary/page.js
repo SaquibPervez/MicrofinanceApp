@@ -1,12 +1,11 @@
 'use client';
-
 import { jwtDecode } from 'jwt-decode';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 import QRCode from '../Components/QRCode';
 import { useEffect, useState } from 'react';
 
-function SummaryModal({ show, onClose }) {
+function SummaryModal() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -18,10 +17,10 @@ function SummaryModal({ show, onClose }) {
     try {
       const parsed = loanObject ? JSON.parse(decodeURIComponent(loanObject)) : null;
       setLoanData(parsed);
-      console.log(parsed,"data")
     } catch (error) {
       console.error('Error parsing loan data:', error);
     }
+
     const token = Cookies.get('token');
     if (token) {
       try {
@@ -46,7 +45,7 @@ function SummaryModal({ show, onClose }) {
           initialDeposit: loanData.deposit,
           loanAmount: loanData.amount,
           loanPeriod: loanData.period,
-          monthlyPayment: loanData.monthlyPay,
+          monthlyPayment: loanData.monthlypay,
           userId,
           tokenNumber: '',
           appointmentDetails: {
@@ -58,7 +57,6 @@ function SummaryModal({ show, onClose }) {
       });
 
       const result = await response.json();
-      console.log(result, "Result")
       if (!response.ok) {
         alert(`Error: ${result.message || 'Something went wrong'}`);
         return;
@@ -72,42 +70,74 @@ function SummaryModal({ show, onClose }) {
     }
   };
 
-  if (!show || !loanData) return null;
+  if (!loanData) {
+    return <div className="text-center mt-20 text-gray-600">Loading loan summary...</div>;
+  }
 
-  const { loan, subcategory, deposit, amount, period, monthlyPay } = loanData;
-
+  const { loan, subcategory, deposit, amount, period, monthlypay } = loanData;
+  console.log(monthlypay, 'pay')
   return (
-    <div className="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 h-full">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-        <h2 className="text-lg font-bold text-gray-700 mb-4">Loan Summary</h2>
-        <p><strong>Selected Category:</strong> {loan}</p>
-        <p><strong>Selected Subcategory:</strong> {subcategory}</p>
-        <p><strong>Initial Deposit:</strong> Rs. {deposit}</p>
-        <p><strong>Loan Amount:</strong> Rs. {amount}</p>
-        <p><strong>Loan Period:</strong> {period}</p>
-        <h3 className="text-lg font-bold text-gray-700 mt-4">Monthly Payment:</h3>
-        <p className="mb-4">Rs. {monthlyPay}</p>
-
-        {userId && <QRCode text={userId} size={64} />}
-
-        <div className="flex justify-end space-x-3 mt-4">
-          <button
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-
-          <button
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            onClick={submitLoanReq}
-          >
-            Proceed
-          </button>
+    <>
+    <div className='mx-10 border mt-10'>
+    <div className="bg-blue-600 px-6 py-4">
+      <h2 className="text-xl font-bold text-white">Loan Application Summary</h2>
+    </div>
+    
+    <div className="p-6">
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-8 text-center">
+          <DetailItem label="Loan Category" value={loan} />
+          <DetailItem label="Subcategory" value={subcategory} />
+          <DetailItem label="Initial Deposit" value={`Rs. ${deposit.toLocaleString()}`} />
+          <DetailItem label="Loan Amount" value={`Rs. ${amount.toLocaleString()}`} />
+          <DetailItem label="Loan Period" value={period} />
         </div>
+
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-blue-800">Monthly Payment</span>
+            <span className="text-2xl font-bold text-blue-600">
+              Rs. {monthlypay.toLocaleString()}
+            </span>
+          </div>
+          <p className="text-sm text-blue-600 mt-1">*Based on current terms</p>
+        </div>
+
+        {/* QR Code Placeholder */}
+        {/* {userId && (
+          <div className="flex justify-center pt-2">
+          <QRCode text={userId} size={128} />
+          </div>
+          )} */}
+      </div>
+
+      <div className="flex justify-between mt-8 space-x-4">
+        <button
+          onClick={() => router.back()}
+          className="flex-1 px-4 py-3 border border-gray-500 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+          >
+          Back
+        </button>
+        <button
+          onClick={submitLoanReq}
+          className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors shadow-md hover:shadow-lg"
+          >
+          Confirm & Proceed
+        </button>
       </div>
     </div>
+   </div>
+          </>
+);
+
+function DetailItem({ label, value }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-medium text-gray-800">{value}</p>
+    </div>
   );
+}
 }
 
 export default SummaryModal;

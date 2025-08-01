@@ -24,11 +24,10 @@ const searchParams = useSearchParams();
  
 };
 
-
   return (
     <>
     <div><Toaster/></div>
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md my-3">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Loan Calculator</h1>
         <p className="text-gray-600">Enter the loan details to calculate your monthly payment</p>
@@ -132,15 +131,15 @@ const searchParams = useSearchParams();
     const period = parseInt(loanPeriod); 
     
   const principal = amount - deposit;
-  const monthly = principal / period;
-
+  const monthly = (principal / period);
+  const monthlypay = Math.round(monthly);           
     const LoanData = {
       loan: loan.name,
       subcategory,
       deposit: Initialdeposit,
       amount: loanAmount,
       period: loanPeriod,
-      monthlypay: monthly
+      monthlypay,
     };
 
     const LoanSummary = encodeURIComponent(JSON.stringify(LoanData));

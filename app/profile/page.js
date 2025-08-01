@@ -41,7 +41,7 @@ function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen ">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading your profile...</p>
@@ -52,7 +52,7 @@ function ProfilePage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
         <div className="max-w-md p-6 bg-white rounded-lg shadow-md text-center">
           <div className="text-red-500 mb-4">
             <FiXCircle size={48} className="mx-auto" />

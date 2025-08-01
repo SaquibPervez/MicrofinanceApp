@@ -7,7 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default function Home() {
   return (
-    <main className="bg-blue-100">
+    <main className="bg-gradient-to-br from-blue-50 to-gray-100">
       
       {/* hero section */}
     <LandingPage />

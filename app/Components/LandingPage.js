@@ -8,7 +8,6 @@ function LandingPage() {
   return (
     <>
         <section className="flex flex-col md:flex-row items-center mx-10 gap-8">
-      {/* Left content: 50% */}
       <div className="md:w-1/2 text-center md:text-left">
        <h1 className="text-5xl font-extrabold text-blue-800 mb-6 leading-tight">
   Loans for Life’s Biggest Moments
@@ -37,7 +36,7 @@ function LandingPage() {
 
       <section
       id="benefits"
-      className="mt-20 grid gap-12 md:grid-cols-3 text-center mx-6 md:mx-10"
+      className="mt-10 grid gap-12 md:grid-cols-3 text-center mx-6 md:mx-10"
     >
       <div className="group p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 hover:scale-[1.03] transform">
         <CheckBadgeIcon className="mx-auto mb-5 w-14 h-14 text-blue-600 group-hover:text-blue-800 transition duration-300" />

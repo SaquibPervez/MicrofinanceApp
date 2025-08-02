@@ -10,7 +10,6 @@ import {
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
 import Link from 'next/link';
 
 const navItems = [
@@ -54,9 +53,12 @@ export default function Navbar() {
     router.push('/admin/Login');
   };
 
-  const logoutUser = () => {
-    Cookies.remove('token');
-    router.push('/');
+  const logoutUser = async () => {
+   await fetch('/api/users/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    router.push('/dashboard');
   };
 
   const handleLogout = () => {
@@ -69,10 +71,8 @@ export default function Navbar() {
   return (
     <header className="w-full h-16 bg-blue-100 border-b border-gray-200 px-4 sticky top-0 z-50 shadow-sm">
       <div className="flex items-center justify-between h-full">
-        {/* Title - Always Visible */}
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
 
-        {/* Hamburger - Only on Mobile */}
         <div className="relative md:hidden">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -82,7 +82,6 @@ export default function Navbar() {
             <Bars3Icon className="h-6 w-6" />
           </button>
 
-          {/* Dropdown Menu */}
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
               <nav className="flex flex-col py-2">

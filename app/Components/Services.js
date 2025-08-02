@@ -102,14 +102,14 @@ function Services() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-blue-50 to-gray-100 mx-10">
+    <section className="py-16 bg-blue-100 mx-10">
         {/* Section Header */}
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Our Loan Services
           </h2>
           <div className="w-20 h-1.5 bg-teal-600 mx-auto rounded-full"></div>
-          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto mb-8">
             Tailored financial solutions designed to meet your unique needs and aspirations
           </p>
         </div>

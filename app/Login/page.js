@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Toaster, toast } from 'sonner';
 
 export default function Register() {
   const router = useRouter();
@@ -14,6 +15,38 @@ export default function Register() {
     phone: '',
   });
 
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      toast.error('Please enter your full name');
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
+
+    const cnicRegex = /^\d{5}\d{7}\d$/;
+    if (!cnicRegex.test(formData.cnic)) {
+      toast.error('Please enter a valid CNIC');
+      return false;
+    }
+
+    const phoneRegex = /^\+?\d[\d\s-]{7,}\d$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error('Please enter a valid phone number');
+      return false;
+    }
+
+    if (!formData.address.trim() || formData.address.length < 10) {
+      toast.error('Please enter a complete address (at least 10 characters)');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -24,6 +57,11 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -35,21 +73,26 @@ export default function Register() {
 
       if (res.ok) {
         const useremail = encodeURIComponent(formData.email); 
-        alert('OTP has been sent to your email address');
-        router.push(`/Login/verifyOTP?email=${useremail}`);
+        toast.success('OTP has been sent to your email address');
+        setTimeout(() => {
+          router.push(`/Login/verifyOTP?email=${useremail}`);
+        }, 1500);
       } else {
         const errorData = await res.json();
-        alert(errorData.message || 'Registration failed. Please try again.');
+        toast.error(errorData.message || 'Registration failed. Please try again.');
       }
     } catch (error) {
-      alert('An error occurred. Please try again later.');
+      toast.error('An error occurred. Please try again later.');
+      console.error('Registration error:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4 text-black">
+    <div className="min-h-screen bg-blue-100 flex items-center justify-center p-4 text-black">
+      <Toaster position="top-center" richColors closeButton />
+      
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Create Your Account</h1>

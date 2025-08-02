@@ -31,30 +31,34 @@ function LoanDetail() {
     setCurrentLoan(null);
   };
 
-  const getLoans = async () => {
-    try {
-      const token = Cookies.get('token');
-      if (!token) {
-        setError('Registration Required');
-        return;
-      }
+ const getLoans = async () => {
+  try {
+    const tokenRes = await fetch('/api/users/me');
+    const tokenData = await tokenRes.json();
+    const token = tokenData.token;
 
-      const { userId } = jwtDecode(token);
-      const res = await fetch('/api/loan-request/user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch loans');
-      const { data } = await res.json();
-      setLoans(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!token) {
+      setError('Registration Required');
+      return;
     }
-  };
+
+    const { userId } = jwtDecode(token);
+    const res = await fetch('/api/loan-request/user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch loans');
+
+    const { data } = await res.json();
+    setLoans(data);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     getLoans();
@@ -99,7 +103,7 @@ function LoanDetail() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-blue-100">
         <div className="max-w-md p-6 bg-white rounded-lg shadow-md text-center">
           <div className="text-red-500 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -120,7 +124,7 @@ function LoanDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8 mt-10">
+    <div className="min-h-screen bg-blue-100 py-8 px-4 sm:px-6 lg:px-8 mt-10">
       {/* QR Code Modal */}
       {showQRModal && (
         <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">

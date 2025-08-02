@@ -16,7 +16,7 @@ export async function POST(req) {
     const user = await User.findOne({ email });
 
     if (!user || user.otp !== otp) {
-      return NextResponse.json({ error: 'Invalid OTP or user not found' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid OTP' }, { status: 401 });
     }
 
     user.status = 'Verified';
@@ -32,6 +32,16 @@ export async function POST(req) {
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
+
+   
+  const response = NextResponse.json({ message: 'Verification successful', token });
+response.cookies.set('token', token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  path: '/',
+  maxAge: 60 * 60 * 24 * 7,
+});
+return response;
 
     return NextResponse.json(
       { message: 'Verification successful', token },

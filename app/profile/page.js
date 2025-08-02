@@ -9,32 +9,34 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getProfile = async () => {
-    try {
-      const token = Cookies.get('token');
-      if (!token) {
-        setError('Registration Required');
-        return;
-        
-      }
+ const getProfile = async () => {
+  try {
+    const tokenRes = await fetch('/api/users/me');
+    const tokenData = await tokenRes.json();
+    const token = tokenData.token;
 
-      const { userId } = jwtDecode(token);
-      const res = await fetch('/api/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch profile');
-      const { data } = await res.json();
-      setUser(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!token) {
+      setError('Registration Required');
+      return;
     }
-  };
 
+    const { userId } = jwtDecode(token);
+    const res = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch profile');
+
+    const { data } = await res.json();
+    setUser(data);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => {
     getProfile();
   }, []);
@@ -52,7 +54,7 @@ function ProfilePage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-blue-100">
         <div className="max-w-md p-6 bg-white rounded-lg shadow-md text-center">
           <div className="text-red-500 mb-4">
             <FiXCircle size={48} className="mx-auto" />

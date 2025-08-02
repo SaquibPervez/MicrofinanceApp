@@ -1,5 +1,4 @@
 "use client";
-
 import {
   HomeIcon,
   CurrencyDollarIcon,
@@ -9,11 +8,10 @@ import {
   ShieldCheckIcon,
   ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-
+import { Toaster, toast } from 'sonner';
 const navItems = [
   { name: "Dashboard", href: "/", icon: HomeIcon },
   { name: "Avail Loans", href: "/dashboard", icon: CurrencyDollarIcon },
@@ -31,7 +29,6 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isAdminRoute, setIsAdminRoute] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   useEffect(() => {
     setIsAdminRoute(pathname.startsWith("/admin"));
   }, [pathname]);
@@ -41,12 +38,17 @@ export default function Sidebar() {
         method: "POST",
         credentials: 'include'
     });
+    toast.success('Logout Successfully!');
     router.push('/admin/Login')
   };
 
-  const logoutUser = () => {
-    Cookies.remove("token");
-    router.push("/");
+ const logoutUser = async () => {
+    await fetch('/api/users/logout', {
+        method: "POST",
+        credentials: 'include'
+    });
+   toast.success('Logout Successfully!');
+    router.push('/')
   };
 
   const handleLogout = () => {
@@ -55,6 +57,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 h-screen bg-white shadow-sm flex flex-col border-r border-gray-100 fixed left-0 top-0 z-10">
+     <Toaster position="top-center" richColors closeButton />
       <div className="h-16 flex items-center justify-center px-6 border-b border-gray-100 shadow-sm">
         <h1 className="text-2xl font-semibold text-blue-600">LoanEase</h1>
       </div>

@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { useEffect, useState, Suspense } from 'react';
+import { Toaster, toast } from 'sonner';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,31 +14,49 @@ function SummaryContent() {
   const [loanData, setLoanData] = useState(null);
   const [userId, setUserId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   useEffect(() => {
     const loanObject = searchParams.get('loan');
+
+    // Parse loan data from query
     try {
       const parsed = loanObject ? JSON.parse(decodeURIComponent(loanObject)) : null;
       setLoanData(parsed);
     } catch (error) {
       console.error('Error parsing loan data:', error);
-      alert('Invalid loan data format');
-      router.push('/dashboard');
+      toast.error('Invalid loan data format');
+      setTimeout(() => router.push('/dashboard'), 1500);
+      return;
     }
 
-    const token = Cookies.get('token');
-    if (token) {
+    async function fetchToken() {
       try {
-        const decoded = jwtDecode(token);
-        setUserId(decoded.userId);
+        const res = await fetch('/api/users/me');
+        const data = await res.json();
+        const token = data.token;
+
+        if (token) {
+          const decoded = jwtDecode(token);
+          setUserId(decoded.userId);
+        } else {
+          toast.error('Please login to continue');
+          router.push('/Login');
+        }
       } catch (err) {
-        console.error('Invalid token', err);
+        console.error('Token fetch failed:', err);
+        toast.error('Session expired. Please login again.');
+        router.push('/Login');
       }
     }
+
+    fetchToken();
   }, [searchParams, router]);
 
   const submitLoanReq = async () => {
-    if (!loanData) return;
+    if (!loanData) {
+      toast.error('No loan data found');
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -63,14 +82,14 @@ function SummaryContent() {
 
       const result = await response.json();
       if (!response.ok) {
-        throw new Error(result.message || 'Something went wrong');
+        throw new Error(result.message || 'Failed to submit loan request');
       }
 
-      alert('Loan request saved successfully');
-      router.push('/loandetail');
+      toast.success('Loan request submitted successfully!');
+      setTimeout(() => router.push('/loandetail'), 1500);
     } catch (error) {
       console.error('Loan request error:', error);
-      alert(`Error: ${error.message || 'An error occurred while submitting your loan request.'}`);
+      toast.error(error.message || 'Failed to submit loan request. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -79,6 +98,7 @@ function SummaryContent() {
   if (!loanData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
+        <Toaster position="top-center" richColors closeButton />
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading loan summary...</p>
@@ -90,8 +110,10 @@ function SummaryContent() {
   const { loan, subcategory, deposit, amount, period, monthlypay } = loanData;
 
   return (
-    <div className='mx-4 md:mx-10 border mt-10'>
-      <div className="bg-blue-600 px-6 py-4">
+    <div className='mx-4 md:mx-10 border my-10'>
+      <Toaster position="top-center" richColors closeButton />
+      
+      <div className="bg-blue-600 px-6 py-4 mt-5">
         <h2 className="text-xl font-bold text-white">Loan Application Summary</h2>
       </div>
 
@@ -130,7 +152,15 @@ function SummaryContent() {
               isSubmitting ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
             }`}
           >
-            {isSubmitting ? 'Submitting...' : 'Confirm & Proceed'}
+            {isSubmitting ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+              </span>
+            ) : 'Confirm & Proceed'}
           </button>
         </div>
       </div>
@@ -151,6 +181,7 @@ export default function SummaryModal() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen">
+        <Toaster position="top-center" richColors closeButton />
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading loan details...</p>

@@ -2,7 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
+import { Toaster, toast } from 'sonner';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,19 +13,17 @@ function VerifyOTPContent() {
 
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleVerify = async (e) => {
     e.preventDefault();
-    setError('');
 
     if (!otp || !email) {
-      setError('Please enter the OTP code');
+      toast.error('Please enter the OTP sent to your email');
       return;
     }
 
     if (otp.length !== 6) {
-      setError('OTP must be 6 digits');
+      toast.error('OTP must be 6 digits');
       return;
     }
 
@@ -41,17 +39,15 @@ function VerifyOTPContent() {
       const result = await res.json();
 
       if (res.ok) {
-        Cookies.set('token', result.token, { 
-          expires: 7, 
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict'
-        });
-        router.push('/dashboard');
+        toast.success('Verification successful! Redirecting...');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1500);
       } else {
-        setError(result.error || 'Invalid OTP code. Please try again.');
+        toast.error(result.error || 'Invalid OTP code. Please try again.');
       }
     } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
+      toast.error('An unexpected error occurred. Please try again.');
       console.error('OTP Verification Error:', error);
     } finally {
       setIsLoading(false);
@@ -59,12 +55,17 @@ function VerifyOTPContent() {
   };
 
   if (!email) {
-    router.push('/login');
+    toast.error('Email not found. Redirecting to login...');
+    setTimeout(() => {
+      router.push('/login');
+    }, 1500);
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-blue-100 flex items-center justify-center p-4">
+      <Toaster position="top-center" richColors closeButton />
+      
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100">
         <div className="text-center mb-8">
           <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
@@ -112,12 +113,6 @@ function VerifyOTPContent() {
             />
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center py-2 px-3 bg-red-50 rounded-md">
-              {error}
-            </div>
-          )}
-
           <button
             type="submit"
             disabled={isLoading}
@@ -147,6 +142,7 @@ export default function VerifyOTP() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
+        <Toaster position="top-center" richColors closeButton />
         <div className="p-4 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading verification page...</p>

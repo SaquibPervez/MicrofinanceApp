@@ -1,7 +1,7 @@
 'use client'
 import { useSearchParams } from 'next/navigation';
 import { useState, Suspense } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,7 @@ function CalculatorContent() {
   } catch (error) {
     console.error("Error parsing loan data:", error);
     toast.error("Invalid loan data");
-    router.push('/');
+    setTimeout(() => router.push('/'), 1500);
     return null;
   }
 
@@ -28,8 +28,57 @@ function CalculatorContent() {
 
   if (!loan) return null;
 
+  const handleCalculate = () => {
+    if (!subcategory) {
+      toast.error("Please select a subcategory");
+      return;
+    }
+    if (!loanAmount || parseFloat(loanAmount) <= 0) {
+      toast.error("Please enter a valid loan amount");
+      return;
+    }
+    if (!loanPeriod) {
+      toast.error("Please select a loan period");
+      return;
+    }
+
+    const amount = parseFloat(loanAmount);
+    const maxAmount = typeof loan.maxAmount === 'number' ? loan.maxAmount : parseFloat(loan.maxAmount);
+    
+    if (amount > maxAmount) {
+      toast.error(`Loan amount cannot exceed ₨${maxAmount.toLocaleString()}`);
+      return;
+    }
+
+    const deposit = Initialdeposit ? parseFloat(Initialdeposit) : 0;
+    const principal = amount - deposit;
+    
+    if (principal <= 0) {
+      toast.error("Initial deposit cannot be greater than loan amount");
+      return;
+    }
+
+    const period = parseInt(loanPeriod); 
+    const monthly = (principal / period);
+    const monthlypay = Math.round(monthly);           
+    
+    const LoanData = {
+      loan: loan.name,
+      subcategory,
+      deposit: Initialdeposit,
+      amount: loanAmount,
+      period: loanPeriod,
+      monthlypay,
+    };
+
+    const LoanSummary = encodeURIComponent(JSON.stringify(LoanData));
+    router.push(`/LoanSummary?loan=${LoanSummary}`);
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md my-3">
+      <Toaster position="top-center" richColors closeButton />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Loan Calculator</h1>
         <p className="text-gray-600">Enter the loan details to calculate your monthly payment</p>
@@ -59,9 +108,11 @@ function CalculatorContent() {
           </div>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={(e) => {
+          e.preventDefault();
+          handleCalculate();
+        }}>
           <select
-            required
             name="subcategory"
             value={subcategory}
             onChange={(e) => setSubcategory(e.target.value)}
@@ -78,7 +129,6 @@ function CalculatorContent() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Loan Amount (Max is ₨: {loan.maxAmount})</label>
             <input 
-              required
               type="number" 
               id="loanAmount" 
               name="loanAmount" 
@@ -93,7 +143,6 @@ function CalculatorContent() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Initial Deposit (₨) (If Any)</label>
             <input 
-              required
               type="number" 
               id="initialDeposit" 
               name="initialDeposit" 
@@ -107,7 +156,6 @@ function CalculatorContent() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Loan Period (Years)</label>
             <select
-              required
               name="loanPeriod"
               value={loanPeriod}
               onChange={(e) => setLoanPeriod(e.target.value)}
@@ -127,26 +175,7 @@ function CalculatorContent() {
 
           <div className="pt-4">
             <button 
-              onClick={() => {
-                const amount = parseFloat(loanAmount);
-                const deposit = Initialdeposit ? parseFloat(Initialdeposit) : 0;
-                const period = parseInt(loanPeriod); 
-                const principal = amount - deposit;
-                const monthly = (principal / period);
-                const monthlypay = Math.round(monthly);           
-                
-                const LoanData = {
-                  loan: loan.name,
-                  subcategory,
-                  deposit: Initialdeposit,
-                  amount: loanAmount,
-                  period: loanPeriod,
-                  monthlypay,
-                };
-
-                const LoanSummary = encodeURIComponent(JSON.stringify(LoanData));
-                router.push(`/LoanSummary?loan=${LoanSummary}`);
-              }}
+              type="submit"
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200"
             >
               Show Loan Summary
@@ -161,8 +190,12 @@ function CalculatorContent() {
 export default function Calculator() {
   return (
     <>
-      <div><Toaster/></div>
-      <Suspense fallback={<div className="flex justify-center items-center h-screen">Loading calculator...</div>}>
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-screen">
+          <Toaster position="top-center" richColors closeButton />
+          <div>Loading calculator...</div>
+        </div>
+      }>
         <CalculatorContent />
       </Suspense>
     </>

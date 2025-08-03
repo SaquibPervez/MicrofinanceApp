@@ -57,7 +57,7 @@ export default function Sidebar() {
 
   return (
     <>
-     <Toaster position="top-center" richColors closeButton className="z-50" />
+     <Toaster position="top-center" richColors closeButton className="fixed z-[100]"/>
     <aside className="w-64 h-screen bg-white shadow-sm flex flex-col border-r border-gray-100 fixed left-0 top-0 z-10">
       <div className="h-16 flex items-center justify-center px-6 border-b border-gray-100 shadow-sm">
         <h1 className="text-2xl font-semibold text-blue-600">LoanEase</h1>

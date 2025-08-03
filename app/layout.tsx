@@ -19,7 +19,7 @@ export default function RootLayout({
           <div className="min-h-screen ">{children}</div>
         ) : (
           <div className="min-h-screen flex flex-col md:flex-row bg-blue-100">
-            <div className="md:hidden fixed top-0 left-0 right-0 bg-blue-100">
+            <div className="md:hidden fixed top-0 left-0 z-20 right-0 bg-blue-100">
               <Navbar />
             </div>
 
@@ -28,7 +28,7 @@ export default function RootLayout({
             </div>
 
             <div className="flex-1 md:ml-64 pt-16 md:pt-0">
-              <div className="hidden md:block fixed top-0 right-0 left-64 bg-blue-100">
+              <div className="hidden md:block fixed top-0 right-0 z-30 left-64 bg-blue-100">
                 <Navbar />
               </div>
 

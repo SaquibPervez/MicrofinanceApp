@@ -69,7 +69,7 @@ export default function Navbar() {
   const menuItems = isAdminRoute ? adminItems : navItems;
 
   return (
-    <header className="w-full h-16 bg-blue-100 border-b border-gray-200 px-4 sticky top-0 z-50 shadow-sm">
+    <header className="w-full h-16 bg-blue-100 border-b border-gray-200 px-4 sticky top-0 shadow-sm">
       <div className="flex items-center justify-between h-full">
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
 

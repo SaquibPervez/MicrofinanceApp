@@ -27,11 +27,11 @@ export default function Register() {
       return false;
     }
 
-    const cnicRegex = /^\d{5}\d{7}\d$/;
-    if (!cnicRegex.test(formData.cnic)) {
-      toast.error('Please enter a valid CNIC');
-      return false;
-    }
+  const cnicRegex = /^\d{14}$/;
+if (!cnicRegex.test(formData.cnic)) {
+  toast.error('CNIC must be exactly 14 digits (no hyphens or spaces)');
+  return false;
+}
 
     const phoneRegex = /^\+?\d[\d\s-]{7,}\d$/;
     if (!phoneRegex.test(formData.phone)) {

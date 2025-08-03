@@ -27,9 +27,9 @@ export default function Register() {
       return false;
     }
 
-  const cnicRegex = /^\d{14}$/;
+  const cnicRegex = /^\d{13}$/;
 if (!cnicRegex.test(formData.cnic)) {
-  toast.error('CNIC must be exactly 14 digits (no hyphens or spaces)');
+  toast.error('CNIC must be exactly 13 digits (no hyphens or spaces)');
   return false;
 }
 
